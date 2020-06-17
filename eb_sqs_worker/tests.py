@@ -20,7 +20,7 @@ class SQSLocaltestCase(TestCase):
                     "echo_task": "eb_sqs.tasks.test_task"
                 }
         ):
-            from eb_sqs import sqs
+            from eb_sqs_worker import sqs
             sqs.send_task("echo_task", {"foo": "bar"})
 
     def test_cant_send_task_of_handle_sqs_disabled(self):
