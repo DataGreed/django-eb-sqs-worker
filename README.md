@@ -1,4 +1,4 @@
-![Tests](https://github.com/DataGreed/django-eb-sqs-worker/workflows/Tests/badge.svg)
+[![Tests](https://github.com/DataGreed/django-eb-sqs-worker/workflows/Tests/badge.svg)](https://github.com/DataGreed/django-eb-sqs-worker/actions?query=workflow%3ATests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # django-eb-sqs-worker
