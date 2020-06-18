@@ -4,13 +4,19 @@
 
 Django Background Tasks for Amazon Elastic Beanstalk.
 
-Lets you handle background jobs on [Elastic Beanstalk Worker Environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html) sent via SQS and provides methods to send tasks to worker.
+Created by Alexey "DataGreed" Strelkov.
+
+## Overview
+
+_django-eb-sqs-worker_ lets you handle background jobs on [Elastic Beanstalk Worker Environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html) sent via SQS and provides methods to send tasks to worker.
 
 You can use the same Django codebase for both your Web Tier and Worker Tier environments and send tasks 
 from Web environment to Worker environment. Amazon fully manages autoscaling for you. 
 Tasks are sent via [Amazon Simple Queue Service](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) and are delivered to your worker with [Elastic Beanstalk's SQS daemon](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-daemon).
 
-Created by Alexey "DataGreed" Strelkov.
+Here's the diagram of how tasks move through the system, tasks movement is represented by arrows:
+
+![](./docs/img/ebsqs_diag.png)
 
 ## Installation
 
