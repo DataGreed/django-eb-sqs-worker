@@ -1,5 +1,6 @@
 import json
 
+from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, Client, RequestFactory
 
 # Create your tests here.
@@ -121,8 +122,6 @@ class SQSLocalDecoratedTasksTestCase(TestCase):
             from eb_sqs_worker import sqs
             from eb_sqs_worker import tasks
 
-            # FIXME: we should somehow heck here that the tasks are actually being run via sqs view and not just called as functions directly
-
             sent_task = tasks.decorated_test_task(foo="bar")
             self.assertIsNone(sent_task)    # if the task was scheduled, does not return anything
 
@@ -136,3 +135,15 @@ class SQSLocalDecoratedTasksTestCase(TestCase):
             function_result =  tasks.decorated_test_task_with_decorator_args.execute(foo2="bar2")
             self.assertIsNotNone(function_result)  # if the function was called directly, returns function result
             self.assertEqual(function_result['foo2'], 'bar2')
+
+    def test_registering_twice_through_decorator_triggers_exception(self):
+        with self.settings(
+                AWS_EB_HANDLE_SQS_TASKS=False,  # must be True ONLY on isolated worker environments
+                AWS_EB_RUN_TASKS_LOCALLY=True,  # set to False to send tasks to SQS
+        ):
+            from importlib import reload
+
+            with self.assertRaises(ImproperlyConfigured):
+                from eb_sqs_worker import tasks
+                reload(tasks)
+                reload(tasks)
