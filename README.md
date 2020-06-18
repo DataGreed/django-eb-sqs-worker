@@ -41,6 +41,29 @@ INSTALLED_APPS = [
 ]
 ```
 
+Update your `settings.py` for both Worker and Web EB environments:
+```python
+# region where your elastic beanstalk environments are deployed, e.g. "us-west-1"
+AWS_EB_DEFAULT_REGION = "your default region"    
+# your aws access key id
+AWS_ACCESS_KEY_ID = "insert your key id here"
+# your aws access key 
+AWS_SECRET_ACCESS_KEY = "insert your key here"
+```
+
+In the settings file for your **Web** tier environment add the following setting 
+(this is important due to possible security problems if you don't set this):
+```python
+# never set to True on Web environment. Use True only on Worker env and local development env
+AWS_EB_HANDLE_SQS_TASKS=False   
+```
+
+In the setting files used by your **Worker** environments add the following setting:
+```python
+# never set to True on Web environment. Use True only on Worker env and local development env
+AWS_EB_HANDLE_SQS_TASKS=True
+```
+
 Add eb-sqs-worker urls to your project's main `urls.py` module:
 ```python
 # urls.py
@@ -56,25 +79,103 @@ urlpatterns += eb_sqs_urlpatterns
 
 
 
-`#TODO settings`
-
-`#TODO urls`
 
 ## Usage
 
-`#TODO`
+### Simple way
 
-### Defining Jobs
+#### Defining Background Tasks
 
-`#TODO`
+To define a job create a function decorated by `task` decorator:
 
-### Sending jobs to worker
+```python
+from eb_sqs_worker.decorators import task
+@task
+def some_task(**kwargs):
+    
+    print(f"The decorated test task is being run with kwargs {kwargs} and will echo them back")
 
-`#TODO`
+    return kwargs
+``` 
 
-### Periodic jobs
+#### Queueing tasks
 
-`#TODO` (add link to https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-periodictasks), explain configuration
+If the task was defined using `@task` decorator, you can send it to background queue like this:
+
+```python
+# sends the task to SQS queue where it will be automatically picked up and executed by worker
+some_task(foo="bar")    
+```
+
+You can set `settings.AWS_EB_RUN_TASKS_LOCALLY` to `True` in development – this will force all tasks to execute
+locally in sync mode without sending them to the queue. This is useful for testing.
+
+If you need to execute the function synchronously just one time somewhere in your code without changing this setting, 
+you can do it like this: 
+
+```python
+# sends the task to SQS queue where it will be automatically picked up and executed by worker
+some_task.execute(foo="bar")   
+```
+
+**Note:** don't supply positional arguments to the task, always use keyword arguments.
+
+#### Periodic tasks
+
+Periodic tasks are defined the same way as regular task, but it's better to supply a custom name for them:
+
+```python
+from eb_sqs_worker.decorators import task
+@task(task_name="some_periodic_task")
+def periodic_task():
+    
+    print(f"Periodic test task is being run ")
+
+    return True
+``` 
+
+Add `cron.yaml` to the root of the project:
+
+```yaml
+version: 1
+cron:
+ - name: "some_periodic_task"
+   url: "/sqs/"
+   schedule: "0 23 * * *"
+```
+
+Deploy your project to elastic beanstalk and your task will run every day at 23:00. 
+
+Refer to [the documentation](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-periodictasks) for more info on periodic tasks.
+
+**Note**: periodic tasks don't support arguments passing
+
+
+`#TODO describe` (add link to https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-periodictasks), explain configuration
+
+
+### Advanced way
+
+#### Defining Background Tasks
+
+`#TODO describe`
+#### Queueing tasks
+`#TODO describe`
+
+
+#### Periodic tasks
+
+`#TODO describe`
+
+### Interface reference
+
+## @task decorator
+
+`#TODO: add info on arguments`
+
+## send_task
+
+`#TODO: add info on arguments`
 
 ## Settings
 
@@ -86,6 +187,9 @@ tasks will return 404. Defaults to `False`.
 
 ### AWS_EB_ENABLED_TASKS
 Dictionary of enabled tasks. Routes task names to actual task methods.
+
+If you register your tasks using the `task` decorator, you don't need to worry about this setting at all,
+it will be set automatically by the decorator. 
 
 E.g.:
 
@@ -183,8 +287,9 @@ Feel free to open issues if you have any problems or questions with this package
 # TODOs
 
 - take advantage of the new [environment link feature](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-cfg-links.html)
-- decorators for easier setup
 - add pickle serialization
+- finish readme
+- parse GET-parameters for periodic tasks? 
 
 ---
 Search tags 
