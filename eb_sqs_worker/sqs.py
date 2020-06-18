@@ -151,6 +151,11 @@ class SQSTask:
 
         task_method = import_string(task_method_path)
 
+        # check for method added by @task decorator. If present, use it instead
+        if hasattr(task_method, "execute"):
+            if callable(task_method.execute):
+                task_method = task_method.execute
+
         if not callable(task_method):
             raise ImproperlyConfigured(f"Tasks defined in AWS_EB_ENABLED_TASKS must be callables. "
                                        f"Object for task f{self.task_name} is not callable, "

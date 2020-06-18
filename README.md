@@ -12,7 +12,9 @@ _django-eb-sqs-worker_ lets you handle background jobs on [Elastic Beanstalk Wor
 
 You can use the same Django codebase for both your Web Tier and Worker Tier environments and send tasks 
 from Web environment to Worker environment. Amazon fully manages autoscaling for you. 
-Tasks are sent via [Amazon Simple Queue Service](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) and are delivered to your worker with [Elastic Beanstalk's SQS daemon](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-daemon).
+
+Tasks are sent via [Amazon Simple Queue Service](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) and are delivered to your worker with [Elastic Beanstalk's SQS daemon](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-daemon). 
+Periodic tasks are also supported. 
 
 Here's the diagram of how tasks move through the system, tasks movement is represented by arrows:
 
@@ -71,7 +73,7 @@ urlpatterns += eb_sqs_urlpatterns
 
 ### Periodic jobs
 
-`#TODO`
+`#TODO` (add link to https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-periodictasks), explain configuration
 
 ## Settings
 
@@ -181,6 +183,7 @@ Feel free to open issues if you have any problems or questions with this package
 
 - take advantage of the new [environment link feature](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-cfg-links.html)
 - decorators for easier setup
+- add pickle serialization
 
 ---
 Search tags 

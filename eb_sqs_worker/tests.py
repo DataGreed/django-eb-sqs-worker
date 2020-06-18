@@ -103,3 +103,25 @@ class SQSLocalPeriodicTaskTestCase(TestCase):
                                        })
 
             self.assertEqual(response.status_code, 200)
+
+
+class SQSLocalDecoratedTasksTestCase(TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_local_echo_task_sending(self):
+        with self.settings(
+                AWS_EB_HANDLE_SQS_TASKS=False,  # must be True ONLY on isolated worker environments
+                AWS_EB_RUN_TASKS_LOCALLY=True,  # set to False to send tasks to SQS
+                # AWS_EB_ENABLED_TASKS={
+                #     "echo_task": "eb_sqs_worker.tasks.test_task"
+                # }
+        ):
+            from eb_sqs_worker import sqs
+            from eb_sqs_worker import tasks
+
+            # FIXME: we should somehow heck here that the tasks are actually being run via sqs view and not just called as functions directly
+
+            tasks.decorated_test_task(foo="bar")
+            tasks.decorated_test_task_with_decorator_args(foo2="bar2")
