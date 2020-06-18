@@ -17,7 +17,7 @@ class SQSLocaltestCase(TestCase):
                 AWS_EB_HANDLE_SQS_TASKS=False,  # must be True ONLY on isolated worker environments
                 AWS_EB_RUN_TASKS_LOCALLY=True,  # set to False to send tasks to SQS
                 AWS_EB_ENABLED_TASKS={
-                    "echo_task": "eb_sqs.tasks.test_task"
+                    "echo_task": "eb_sqs_worker.tasks.test_task"
                 }
         ):
             from eb_sqs_worker import sqs
@@ -28,7 +28,7 @@ class SQSLocaltestCase(TestCase):
                 AWS_EB_HANDLE_SQS_TASKS=False,  # must be True ONLY on isolated worker environments
                 AWS_EB_RUN_TASKS_LOCALLY=True,  # set to False to send tasks to SQS
                 AWS_EB_ENABLED_TASKS={
-                    "echo_task": "eb_sqs.tasks.test_task"
+                    "echo_task": "eb_sqs_worker.tasks.test_task"
                 }
         ):
             response = self.client.post(reverse("sqs_handle"),
@@ -44,7 +44,7 @@ class SQSLocaltestCase(TestCase):
                 AWS_EB_HANDLE_SQS_TASKS=True,  # must be True ONLY on isolated worker environments
                 AWS_EB_RUN_TASKS_LOCALLY=False,  # set to False to send tasks to SQS
                 AWS_EB_ENABLED_TASKS={
-                    "echo_task": "eb_sqs.tasks.test_task"
+                    "echo_task": "eb_sqs_worker.tasks.test_task"
                 }
         ):
             response = self.client.post(reverse("sqs_handle"),
@@ -60,7 +60,7 @@ class SQSLocaltestCase(TestCase):
                 AWS_EB_HANDLE_SQS_TASKS=True,  # must be True ONLY on isolated worker environments
                 AWS_EB_RUN_TASKS_LOCALLY=False,  # set to False to send tasks to SQS
                 AWS_EB_ENABLED_TASKS={
-                    "echo_task": "eb_sqs.tasks.test_task"
+                    "echo_task": "eb_sqs_worker.tasks.test_task"
                 }
         ):
             # add correct user-agent see https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features
@@ -83,10 +83,10 @@ class SQSLocalPeriodicTaskTestCase(TestCase):
                 AWS_EB_HANDLE_SQS_TASKS=True,  # must be True ONLY on isolated worker environments
                 AWS_EB_RUN_TASKS_LOCALLY=True,  # set to False to send tasks to SQS
                 AWS_EB_ENABLED_TASKS={
-                    "echo_task": "eb_sqs.tasks.test_task"
+                    "echo_task": "eb_sqs_worker.tasks.test_task"
                 }
         ):
-            from eb_sqs import sqs
+            from eb_sqs_worker import sqs
 
             factory = RequestFactory()
 

@@ -24,6 +24,29 @@ pip install -e git+git//github.com/DataGreed/django-eb-sqs-worker.git#egg=django
 pip install django-eb-sqs-worker
 ```
 
+Add `eb_sqs_worker` to `settings.INSTALLED_APPS`:
+```python
+INSTALLED_APPS = [
+    # ...
+    "eb_sqs_worker",
+]
+```
+
+Add eb-sqs-worker urls to your project's main `urls.py` module:
+```python
+# urls.py
+
+urlpatterns = [
+    # your url patterns
+    # ... 
+]
+
+from eb_sqs_worker.urls import urlpatterns as eb_sqs_urlpatterns
+urlpatterns += eb_sqs_urlpatterns
+```
+
+
+
 `#TODO settings`
 
 `#TODO urls`
@@ -45,6 +68,12 @@ pip install django-eb-sqs-worker
 `#TODO`
 
 ## Settings
+
+### AWS_EB_HANDLE_SQS_TASKS
+If set to `True`, tasks will be accepted and handled on this instance. If set to `False`, the URL for handling 
+tasks will return 404. Defaults to `False`.
+
+**Important:** set this to `True` _only_ on your [Worker environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html)
 
 ### AWS_EB_ENABLED_TASKS
 Dictionary of enabled tasks. Routes task names to actual task methods.
@@ -75,9 +104,21 @@ Amazon Access Key Id, refer to [the docs](https://docs.aws.amazon.com/general/la
 
 Amazon Secret Access Key, refer to [the docs](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys)
 
+### AWS_EB_RUN_TASKS_LOCALLY
+
+If set to true, all tasks will be run locally and synchronnously instead of being sent to SQS Queue. Defaults to `False`
+
 ## Security
 
-`#TODO`
+Always set `AWS_EB_HANDLE_SQS_TASKS=False` on Web Tier Environment so the tasks could not be spoofed! 
+Web Tier environments are typically used for hosting publici websites and can be accessed by anoyone on the Internet, 
+meaning that anyone can send any jobs to your site if you leave this option on on Web environment.
+
+Worker environments can only be accessed internally, e.g. via SQS Daemon that POSTs, so `AWS_EB_HANDLE_SQS_TASKS=True` 
+should be set only on worker environments.
+
+Use [Elastic Beanstalk Environment properties](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-cfg-softwaresettings.html#environments-cfg-softwaresettings-console) 
+to supply different setting files for Web and Worker environments. See also: [docs on designating the Django settings](https://docs.djangoproject.com/en/3.0/topics/settings/#designating-the-settings)
 
 ## Tips
 
@@ -99,15 +140,36 @@ Amazon Secret Access Key, refer to [the docs](https://docs.aws.amazon.com/genera
 
 ### Synchronous mode
 
-`#TODO`
+When developing on local machine it might be a good idea to set `AWS_EB_RUN_TASKS_LOCALLY=True`, so all the tasks 
+that should normally be sent to queue will be executed locally on the same machine in sync mode. This lets you test
+your actual task methods in integration tests.
 
 ### Testing django-eb-sqs-worker itself
 
-`#TODO`
+Clone the repository.
+
+```
+git clone https://github.com/DataGreed/django-eb-sqs-worker.git
+```
+
+Install requirements (use python virtual environment)
+```
+cd django-eb-sqs-worker
+pip install -r requirements.txt
+```
+
+Run tests
+```
+sh test.sh
+```
+
 
 ## Contributing
 
-`#TODO`
+If you would like to contribute, please make a Pull Request with the description of changes and add tests to cover
+these changes.
+
+Feel free to open issues if you have any problems or questions with this package.
 
 # TODOs
 
