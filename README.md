@@ -1,4 +1,5 @@
 [![Tests](https://github.com/DataGreed/django-eb-sqs-worker/workflows/Tests/badge.svg)](https://github.com/DataGreed/django-eb-sqs-worker/actions?query=workflow%3ATests)
+[![PyPI version](https://badge.fury.io/py/django-eb-sqs-worker.svg)](https://badge.fury.io/py/django-eb-sqs-worker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # django-eb-sqs-worker
@@ -23,11 +24,7 @@ Here's the diagram of how tasks move through the system, tasks movement is repre
 
 ## Installation
 
-Install using pip `#TODO: publish on pip`
-```
-pip install -e git+git//github.com/DataGreed/django-eb-sqs-worker.git#egg=django-eb-sqs-worker
-```
-
+Install using pip (only python3.x+ is supported):
 
 ```
 pip install django-eb-sqs-worker
