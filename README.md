@@ -284,9 +284,6 @@ these changes.
 
 Feel free to open issues if you have any problems or questions with this package.
 
-## Support 
-
-If you would like to support me, you can play some of my games, you can find them at http://datagreed.pro
 
 # TODOs
 
