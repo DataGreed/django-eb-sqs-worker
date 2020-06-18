@@ -100,6 +100,10 @@ def some_task(**kwargs):
     return kwargs
 ``` 
 
+Make sure the module with your tasks is imported so they will register correctly. 
+
+The best practice is to do it as soon as django loads, e.g. in your app's `models.py` or in corresponding `AppConfig`. 
+
 #### Queueing tasks
 
 If the task was defined using `@task` decorator, you can send it to background queue like this:
