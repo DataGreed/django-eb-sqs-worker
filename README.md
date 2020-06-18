@@ -49,6 +49,8 @@ AWS_EB_DEFAULT_REGION = "your default region"
 AWS_ACCESS_KEY_ID = "insert your key id here"
 # your aws access key 
 AWS_SECRET_ACCESS_KEY = "insert your key here"
+# queue name to use - queues that don't exist will be created automatically
+AWS_EB_DEFAULT_QUEUE_NAME = "any_queue_name_ti_use"
 ```
 
 In the settings file for your **Web** tier environment add the following setting 
@@ -207,7 +209,8 @@ Default Elastic Beanstalk Region. Use the one that your app id deployed in.
 
 ### AWS_EB_DEFAULT_QUEUE_NAME
 
-Name of the queue used by default.
+Name of the queue used by default. If the queue with specified name does not exist, it will be created
+automatically when the first task is queued.
 
 ### AWS_ACCESS_KEY_ID
 
