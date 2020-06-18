@@ -10,12 +10,15 @@ Created by Alexey "DataGreed" Strelkov.
 
 ## Overview
 
-_django-eb-sqs-worker_ lets you handle background jobs on [Elastic Beanstalk Worker Environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html) sent via SQS and provides methods to send tasks to worker.
+_django-eb-sqs-worker_ lets you handle background jobs on 
+[Elastic Beanstalk Worker Environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html) 
+sent via SQS and provides methods to send tasks to worker.
 
 You can use the same Django codebase for both your Web Tier and Worker Tier environments and send tasks 
 from Web environment to Worker environment. Amazon fully manages autoscaling for you. 
 
-Tasks are sent via [Amazon Simple Queue Service](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) and are delivered to your worker with [Elastic Beanstalk's SQS daemon](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-daemon). 
+Tasks are sent via [Amazon Simple Queue Service](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) 
+and are delivered to your worker with [Elastic Beanstalk's SQS daemon](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features-managing-env-tiers.html#worker-daemon). 
 Periodic tasks are also supported. 
 
 Here's the diagram of how tasks move through the system, tasks movement is represented by arrows:
@@ -89,7 +92,7 @@ To define a job create a function decorated by `task` decorator:
 from eb_sqs_worker.decorators import task
 @task
 def some_task(**kwargs):
-    
+    # define your task here
     print(f"The decorated test task is being run with kwargs {kwargs} and will echo them back")
 
     return kwargs
@@ -125,7 +128,7 @@ Periodic tasks are defined the same way as regular task, but it's better to supp
 from eb_sqs_worker.decorators import task
 @task(task_name="some_periodic_task")
 def periodic_task():
-    
+    # define your periodic task here
     print(f"Periodic test task is being run ")
 
     return True
@@ -280,6 +283,10 @@ If you would like to contribute, please make a Pull Request with the description
 these changes.
 
 Feel free to open issues if you have any problems or questions with this package.
+
+## Support 
+
+If you would like to support me, you can play some of my games, you can find them at http://datagreed.pro
 
 # TODOs
 
