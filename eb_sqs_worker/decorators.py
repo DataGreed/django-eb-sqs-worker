@@ -61,7 +61,7 @@ def task(function=None, run_locally=None, queue_name=None, task_name=None):
         # this is needed for two reasons:
         # 1. So the worker can actually run the function instead of entering an infinite loop of re-scheduling it
         # 2. So it can be run syncronously by developer somewhere in the code if needed.
-        task_function.execute = lambda **kwargs: f(**kwargs)
+        f.execute = lambda **kwargs: f(**kwargs)
 
 
         @wraps(f)
