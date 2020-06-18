@@ -123,5 +123,16 @@ class SQSLocalDecoratedTasksTestCase(TestCase):
 
             # FIXME: we should somehow heck here that the tasks are actually being run via sqs view and not just called as functions directly
 
-            tasks.decorated_test_task(foo="bar")
-            tasks.decorated_test_task_with_decorator_args(foo2="bar2")
+            sent_task = tasks.decorated_test_task(foo="bar")
+            self.assertIsNone(sent_task)    # if the task was scheduled, does not return anything
+
+            sent_task = tasks.decorated_test_task_with_decorator_args(foo2="bar2")
+            self.assertIsNone(sent_task)  # if the task was scheduled, does not return anything
+
+            function_result = tasks.decorated_test_task.execute(foo="bar")
+            self.assertIsNotNone(function_result)  # if the function was called directly, returns function result
+            self.assertEqual(function_result['foo'], 'bar')
+
+            function_result =  tasks.decorated_test_task_with_decorator_args.execute(foo2="bar2")
+            self.assertIsNotNone(function_result)  # if the function was called directly, returns function result
+            self.assertEqual(function_result['foo2'], 'bar2')
