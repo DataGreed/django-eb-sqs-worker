@@ -246,7 +246,25 @@ to supply different setting files for Web and Worker environments. See also: [do
 
 ### Accessing Web Tier Database from Worker
 
-`#TODO`
+You will probably want your worker environment to have access to the same database as your web tier environment.
+
+Assuming you have a web tier environment and a worker environment with the same Django apps deployed 
+(if you don't have a worker environment, yet, you can create it using `eb create -t worker <environment name>`)
+and the web tier environment has an 
+[attached database](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.db.html) 
+set up via Elastic Beanstalk with database connection settings populated from environmantal variables, 
+do the following:
+
+1. Open Elastic Beanstalk Web Console 
+2. Navigate to your Web Tier environment > Configuration > Database
+3. Copy database connection settings. Note that the database password will not be shown here. If you don't remember it, 
+you can connect to the Web environment using `eb ssh` and getting it using `cat /opt/python/current/env`
+4. Navigate to your Worker environment >  Configuration > Software > Edit
+5. Add environmental variables for DB connection that you've copied (`RDS_PORT`,`RDS_PASSWORD`,`RDS_USERNAME`, 
+`RDS_DB_NAME`, `RDS_HOSTNAME`) and hit "Apply"
+6. Navigate to your Worker environment >  Configuration > Instances > Edit
+7. Add security group corresponding to your Web Tier environment and hit "Apply", confirm changes.
+8. Re-deploy the application using `eb deploy` to make sure that everything works as expected.
 
 ### Delay abstraction
 

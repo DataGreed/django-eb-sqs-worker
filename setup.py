@@ -3,9 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open('requirements.txt') as fp:
+    install_requires = fp.read()
+
 setuptools.setup(
     name="django-eb-sqs-worker", # Replace with your own username
-    version="0.1.0",
+    version="0.2.1",
     author="Alexey Strelkov",
     author_email="datagreed@gmail.com",
     description="Django Background Tasks for Amazon Elastic Beanstalk",
@@ -19,4 +22,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    install_requires=install_requires,
 )
