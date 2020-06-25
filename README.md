@@ -41,6 +41,16 @@ INSTALLED_APPS = [
 ]
 ```
 
+Add `localhost` to `settings.ALLOWED_HOSTS` so SQS Daemon can post tasks from 
+the queue to your worker:
+```python
+ALLOWED_HOSTS = [
+    # ...
+    "localhost",
+]
+```
+
+
 Update your `settings.py` for both Worker and Web EB environments:
 ```python
 # region where your elastic beanstalk environments are deployed, e.g. "us-west-1"
@@ -79,6 +89,8 @@ from eb_sqs_worker.urls import urlpatterns as eb_sqs_urlpatterns
 urlpatterns += eb_sqs_urlpatterns
 ```
 
+Navigate to your Worker environment in Elastic Beanstalk Web console, then go to Configuration > Worker
+and set HTTP path to `/sqs/`. Apply changes. 
 
 
 
@@ -320,4 +332,4 @@ Feel free to open issues if you have any problems or questions with this package
 ---
 Search tags 
 
-Django Elastic Beanstalk Worker Web Tier Asynchronous Jobs Background Tasks SQS  
+Django Elastic Beanstalk Worker Web Tier Asynchronous celery async django-q Jobs Background Tasks SQS 
