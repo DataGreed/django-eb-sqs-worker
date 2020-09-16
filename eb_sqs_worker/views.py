@@ -55,7 +55,7 @@ class HandleSQSTaskView(View):
         # create task instance and try to run it
         task = SQSTask(body_json, request)
 
-        print(f"[{call_id}] Received {task.get_pretty_info_string()}.")
+        print(f"[{call_id}] Received {task.get_pretty_info_string()}. Headers: {request.headers if hasattr(request, 'headers') else request.META}")
 
         start_time = time.time()
 
