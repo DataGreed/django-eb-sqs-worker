@@ -139,8 +139,8 @@ If you need to execute the function synchronously just one time somewhere in you
 you can do it like this: 
 
 ```python
-# sends the task to SQS queue where it will be automatically picked up and executed by worker
-some_task.execute(foo="bar")   
+# runs the task function synchronously without sending it to the queue and returns result
+result = some_task.execute(foo="bar")   
 ```
 
 **Note:** don't supply positional arguments to the task, always use keyword arguments.
