@@ -247,6 +247,11 @@ Amazon Secret Access Key, refer to [the docs](https://docs.aws.amazon.com/genera
 
 If set to true, all tasks will be run locally and synchronnously instead of being sent to SQS Queue. Defaults to `False`
 
+### AWS_EB_ALERT_WHEN_EXECUTES_LONGER_THAN_SECONDS
+
+Set this to the maximum number of seconds the job is supposed to run. If the job finishes requires more time to finish
+ADMINS will be notified by email.
+
 ## Security
 
 Always set `AWS_EB_HANDLE_SQS_TASKS=False` on Web Tier Environment so the tasks could not be spoofed! 
