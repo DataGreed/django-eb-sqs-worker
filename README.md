@@ -287,7 +287,7 @@ you can connect to the Web environment using `eb ssh` and getting it using `cat 
 5. Add environmental variables for DB connection that you've copied (`RDS_PORT`,`RDS_PASSWORD`,`RDS_USERNAME`, 
 `RDS_DB_NAME`, `RDS_HOSTNAME`) and hit "Apply"
 6. Navigate to your Worker environment >  Configuration > Instances > Edit
-7. Add security group corresponding to your Web Tier environment and hit "Apply", confirm changes.
+7. Add security group corresponding to your Web Tier environment and hit "Apply", confirm changes. (If you are using a single-instance environment instead of a load-balanced one, take a look at [#5](https://github.com/DataGreed/django-eb-sqs-worker/issues/5) to make sure you don't run in security issues)
 8. Re-deploy the application using `eb deploy` to make sure that everything works as expected.
 
 ### Delay abstraction
