@@ -10,7 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-import os, sys
+import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -124,8 +125,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # eb-sqs-worker settings
-AWS_EB_DEFAULT_REGION = "us-west-1"
-AWS_ACCESS_KEY_ID = "dummy"
-AWS_SECRET_ACCESS_KEY = "dummy"
-
-AWS_EB_ALERT_WHEN_EXECUTES_LONGER_THAN_SECONDS = 0.00000000000000000000000000000000000000000000000000000000001
+EB_SQS = {
+    'AWS_EB_DEFAULT_REGION': "us-west-1",
+    'AWS_ACCESS_KEY_ID': "dummy",
+    'AWS_SECRET_ACCESS_KEY': "dummy",
+    'AWS_EB_ALERT_WHEN_EXECUTES_LONGER_THAN_SECONDS': 0.00000000000000000000000000000000000000000000000000000000001
+}

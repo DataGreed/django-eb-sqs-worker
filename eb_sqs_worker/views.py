@@ -3,17 +3,15 @@ import logging
 import time
 import uuid
 
-from django.conf import settings
 from django.core.mail import mail_admins
-from django.shortcuts import render
-
+from django.http import JsonResponse, Http404
 # Create your views here.
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 
 from eb_sqs_worker.sqs import SQSTask
+from .app_settings import app_settings
 
 
 @method_decorator(csrf_exempt, name='dispatch')  # otherwise will hit csrf protection
@@ -26,7 +24,7 @@ class HandleSQSTaskView(View):
         :param request:
         :return:
         """
-        if not getattr(settings, "AWS_EB_HANDLE_SQS_TASKS", False):
+        if not app_settings.AWS_EB_HANDLE_SQS_TASKS:
             # if this django instance is not set to handle
             # incoming SQS tasks from Elastic Beanstalk SQS Daemon,
             # then ignore them as this may pose a security risk.
@@ -69,7 +67,7 @@ class HandleSQSTaskView(View):
         print(f"{call_id} Finished {task.get_pretty_info_string()}. "
               f"Result: {result}. Execution time: {execution_time}s.")
 
-        alert_threshold_seconds = getattr(settings, "AWS_EB_ALERT_WHEN_EXECUTES_LONGER_THAN_SECONDS", None)
+        alert_threshold_seconds = app_settings.AWS_EB_ALERT_WHEN_EXECUTES_LONGER_THAN_SECONDS
         if alert_threshold_seconds:
             if execution_time > alert_threshold_seconds:
                 try:

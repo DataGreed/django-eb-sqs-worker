@@ -2,11 +2,10 @@
 
 from functools import wraps
 
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 
 from eb_sqs_worker import sqs
-
+from .app_settings import app_settings
 
 
 def task(function=None, run_locally=None, queue_name=None, task_name=None):
@@ -34,20 +33,17 @@ def task(function=None, run_locally=None, queue_name=None, task_name=None):
         print(f"eb-sqs-worker: registering task {f} with decorator under name {task_name_to_use}; "
               f"Overrides: run_locally: {run_locally}, queue_name: {queue_name}, task_name: {task_name}")
 
-        if hasattr(settings, "AWS_EB_ENABLED_TASKS"):
-            if settings.AWS_EB_ENABLED_TASKS.get(task_name_to_use):
-                raise ImproperlyConfigured(f"eb-sqs-worker error while trying to register task {task_name_to_use} through "
-                                           f"decorator: task with the same name is already registered in "
-                                           f"settings.AWS_EB_ENABLED_TASKS with "
-                                           f"value {settings.AWS_EB_ENABLED_TASKS.get(task_name_to_use)}. "
-                                           f"Consider specifying task_name in @task decorator and check that "
-                                           f"your code does not reload modules with decorator functions which "
-                                           f"may force them to register multiple times.")
-        else:
-            settings.AWS_EB_ENABLED_TASKS = {}
+        if app_settings.enabled_tasks.get(task_name_to_use):
+            raise ImproperlyConfigured(f"eb-sqs-worker error while trying to register task {task_name_to_use} through "
+                                       f"decorator: task with the same name is already registered in "
+                                       f"settings.AWS_EB_ENABLED_TASKS with "
+                                       f"value {app_settings.enabled_tasks.get(task_name_to_use)}. "
+                                       f"Consider specifying task_name in @task decorator and check that "
+                                       f"your code does not reload modules with decorator functions which "
+                                       f"may force them to register multiple times.")
 
         # register task in settings
-        settings.AWS_EB_ENABLED_TASKS[task_name_to_use] = task_function_execution_path
+        app_settings.enabled_tasks[task_name_to_use] = task_function_execution_path
 
         # prepare the returned function
 
