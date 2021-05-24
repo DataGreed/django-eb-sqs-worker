@@ -1,7 +1,8 @@
 import json
+import sys
 
 from django.core.exceptions import ImproperlyConfigured
-from django.test import TestCase, Client, RequestFactory
+from django.test import TestCase as BaseTestCase, Client, RequestFactory
 # Create your tests here.
 from django.urls import reverse
 from django.utils import timezone
@@ -14,11 +15,16 @@ def update_settings(**kwargs):
     return defaults
 
 
+class TestCase(BaseTestCase):
+    def settings(self, **kwargs):
+        func = super().settings(**kwargs)
+        if 'eb_sqs_worker.app_settings' in sys.modules:
+            from eb_sqs_worker.app_settings import app_settings
+            app_settings.reconfigure()
+        return func
+
+
 class SQSLocaltestCase(TestCase):
-
-    def setUp(self):
-        pass
-
     def test_local_echo_task_sending(self):
         overrides = update_settings(
             AWS_EB_HANDLE_SQS_TASKS=False,

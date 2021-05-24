@@ -10,8 +10,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from eb_sqs_worker.app_settings import app_settings
 from eb_sqs_worker.sqs import SQSTask
+from .app_settings import app_settings
 
 
 @method_decorator(csrf_exempt, name='dispatch')  # otherwise will hit csrf protection
