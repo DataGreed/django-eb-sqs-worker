@@ -1,24 +1,21 @@
 import json
+import logging
 import uuid
 
 import boto3
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.functional import SimpleLazyObject
 from django.utils.module_loading import import_string
-import logging
 
+from .app_settings import app_settings
 
 logger = logging.getLogger(__name__)
-try:
-    AWS_REGION = settings.AWS_EB_DEFAULT_REGION
-except AttributeError:
-    raise ImproperlyConfigured("settings.AWS_EB_DEFAULT_REGION not set, please set it to use eb_sqs_worker django app")
 
-# TODO: make it lazy so we can run tests without setting this settings?
-sqs = boto3.resource('sqs',
-                     region_name=AWS_REGION,
-                     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+def get_sqs():
+    return boto3.resource('sqs',
+                          region_name=app_settings.AWS_REGION,
+                          aws_access_key_id=app_settings.AWS_ACCESS_KEY_ID,
+                          aws_secret_access_key=app_settings.AWS_SECRET_ACCESS_KEY)
 
 
 def send_task(task_name, task_kwargs, run_locally=None, queue_name=None):
@@ -41,7 +38,7 @@ def send_task(task_name, task_kwargs, run_locally=None, queue_name=None):
     }
 
     if run_locally is None:
-        run_locally = getattr(settings, "AWS_EB_RUN_TASKS_LOCALLY", False)
+        run_locally = getattr(app_settings, "AWS_EB_RUN_TASKS_LOCALLY", False)
 
     if run_locally:
 
@@ -57,14 +54,14 @@ def send_task(task_name, task_kwargs, run_locally=None, queue_name=None):
 
         if queue_name is None:
             try:
-                queue_name = settings.AWS_EB_DEFAULT_QUEUE_NAME
+                queue_name = app_settings.AWS_EB_DEFAULT_QUEUE_NAME
             except AttributeError:
                 raise ImproperlyConfigured("settings.AWS_EB_DEFAULT_QUEUE_NAME must be set to send task to SQS queue")
 
             # TODO: cache queues instead of looking the up every time
         try:
             # Get the queue. This returns an SQS.Queue instance
-            queue = sqs.get_queue_by_name(QueueName=queue_name)
+            queue = app_settings.get_queue_by_name(QueueName=queue_name)
         except:
             queue = sqs.create_queue(QueueName=queue_name)
 
@@ -137,17 +134,10 @@ class SQSTask:
         }
         :return:
         """
-        if not getattr(settings, "AWS_EB_ENABLED_TASKS", None):
-            raise ImproperlyConfigured(f"settings.AWS_EB_ENABLED_TASKS not set, cannot run task {self.task_name}")
-
-        if not isinstance(settings.AWS_EB_ENABLED_TASKS, dict):
-            raise ImproperlyConfigured(f"settings.AWS_EB_ENABLED_TASKS must be a dict, "
-                                       f"not {type(settings.AWS_EB_ENABLED_TASKS)}")
-
         try:
-            task_method_path = settings.AWS_EB_ENABLED_TASKS[self.task_name]
+            task_method_path = app_settings.enabled_tasks[self.task_name]
         except KeyError:
-            raise ImproperlyConfigured(f"Task named {self.task_name} is not defined in settings.AWS_EB_ENABLED_TASKS")
+            raise ImproperlyConfigured(f"Cannot run task named {self.task_name}: not registered.")
 
         task_method = import_string(task_method_path)
 
@@ -178,3 +168,6 @@ class SQSTask:
         result = f"{periodic_marker}Task({self.task_name}, kwargs: {self.task_kwargs}{periodic_info})"
 
         return result
+
+
+sqs = SimpleLazyObject(get_sqs)
